@@ -2,9 +2,13 @@
  * Combine all reducers in this file and export the combined reducers.
  */
 
-import { combineReducers } from 'redux-immutable';
-import { fromJS } from 'immutable';
+// import { combineReducers } from 'redux-immutable';
+// import { fromJS } from 'immutable';
+import { combineReducers } from 'redux';
 import { LOCATION_CHANGE } from 'react-router-redux';
+
+import { firebaseReducer } from 'react-redux-firebase'
+import { firestoreReducer } from 'redux-firestore'
 
 import languageProviderReducer from 'containers/LanguageProvider/reducer';
 
@@ -17,9 +21,10 @@ import languageProviderReducer from 'containers/LanguageProvider/reducer';
  */
 
 // Initial routing state
-const routeInitialState = fromJS({
-  location: null,
-});
+const routeInitialState = { location: null };
+// fromJS({
+//   location: null,
+// });
 
 /**
  * Merge route into the global application state
@@ -28,9 +33,10 @@ export function routeReducer(state = routeInitialState, action) {
   switch (action.type) {
     /* istanbul ignore next */
     case LOCATION_CHANGE:
-      return state.merge({
+      return {
+        ...state,
         location: action.payload,
-      });
+      };
     default:
       return state;
   }
@@ -43,6 +49,8 @@ export default function createReducer(injectedReducers) {
   return combineReducers({
     route: routeReducer,
     language: languageProviderReducer,
+    firebase: firebaseReducer,
+    firestore: firestoreReducer,
     ...injectedReducers,
   });
 }
