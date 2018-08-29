@@ -1,26 +1,29 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { compose } from 'redux'
-import { withStateHandlers, withHandlers } from 'recompose'
-import { withFirestore } from 'react-redux-firebase'
-import './App.css'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { compose } from 'redux';
+import { withStateHandlers, withHandlers } from 'recompose';
+import { withFirestore } from 'react-redux-firebase';
+import './App.css';
 
 const enhance = compose(
   withFirestore, // firestoreConnect() can also be used
   withStateHandlers(
     ({ initialVal = '' }) => ({
-      inputVal: initialVal
+      inputVal: initialVal,
     }),
     {
-      onInputChange: ({ inputVal }) => (e) => ({ inputVal: e.target.value }),
-      resetInput: ({ inputVal }) => (e) => ({ inputVal: e.target.value })
-    }
+      onInputChange: ({ inputVal }) => e => ({ inputVal: e.target.value }),
+      resetInput: ({ inputVal }) => e => ({ inputVal: e.target.value }),
+    },
   ),
   withHandlers({
     addTodo: props => () =>
-      props.firestore.add('todos', { text: props.inputVal || 'sample', done: false })
-  })
-)
+      props.firestore.add('todos', {
+        text: props.inputVal || 'sample',
+        done: false,
+      }),
+  }),
+);
 
 const NewTodo = ({ todos, addTodo, inputVal, onInputChange, resetInput }) => (
   <div>
@@ -29,14 +32,15 @@ const NewTodo = ({ todos, addTodo, inputVal, onInputChange, resetInput }) => (
     <button onClick={addTodo}>Add</button>
     <button onClick={resetInput}>Cancel</button>
   </div>
-)
+);
 
 NewTodo.propTypes = {
-  firestore: PropTypes.shape({ // from enhnace (withFirestore)
+  firestore: PropTypes.shape({
+    // from enhnace (withFirestore)
     add: PropTypes.func.isRequired,
   }),
   addTodo: PropTypes.func.isRequired, // from enhance (withHandlers)
-  todos: PropTypes.array
-}
+  todos: PropTypes.array,
+};
 
-export default enhance(NewTodo)
+export default enhance(NewTodo);
